@@ -1,0 +1,100 @@
+ProTrader Backend - Complete File Structure
+===========================================
+
+/tmp/protrader-backend-deploy/
+│
+├── app.py                          # Flask application entry point
+├── requirements.txt                # Python dependencies
+├── render.yaml                     # Render.com blueprint config
+├── README.md                       # Deployment documentation
+├── DEPLOYMENT_STATUS.md            # Current deployment status
+│
+├── api/                            # REST API endpoints
+│   ├── __init__.py
+│   ├── health.py                   # GET /api/health/
+│   ├── screener.py                 # GET /api/screener/recommendations
+│   ├── signals.py                  # POST /api/signals/run
+│   ├── backtest.py                 # POST /api/backtest/
+│   └── news.py                     # GET /api/news/headlines
+│
+├── bots/                           # ⭐ NEW - Base bot infrastructure
+│   ├── __init__.py
+│   └── base_bot.py                 # SignalType, BotStatus, TradingSignal, BaseBot
+│
+├── brokers/                        # Broker integration clients
+│   ├── __init__.py
+│   ├── alpaca_client.py            # Alpaca paper trading
+│   └── gemini_client.py            # Gemini sandbox trading
+│
+├── data/                           # Market data providers
+│   ├── __init__.py
+│   └── providers/
+│       ├── __init__.py
+│       ├── alpaca_data.py          # Stock OHLCV from Alpaca
+│       ├── gemini_data.py          # Crypto OHLCV from Gemini
+│       ├── yfinance_loader.py      # yfinance data loader
+│       └── news_providers.py       # News with VADER sentiment
+│
+├── src/                            # Core trading engine
+│   ├── __init__.py
+│   └── trading/
+│       ├── __init__.py
+│       ├── execution_router.py     # Routes orders to brokers
+│       ├── metrics.py              # Performance evaluation
+│       ├── risk.py                 # Risk management (drawdown)
+│       └── portfolio.py            # Portfolio tracking
+│
+├── strategies/                     # Trading strategies
+│   ├── __init__.py
+│   ├── loader.py                   # Dynamic strategy loader
+│   └── wick_master_pro.py          # ⭐ MODIFIED - Added generate_signals()
+│
+├── config/                         # Configuration files
+│   └── strategies.yaml             # Strategy config (universe, params)
+│
+├── workers/                        # Background workers
+│   ├── __init__.py
+│   ├── paper_trader.py             # Paper trading loop
+│   ├── news_sentiment_worker.py    # News sentiment analysis
+│   └── scheduler.sh                # Worker startup script
+│
+├── backtesting/                    # Backtesting engine
+│   ├── __init__.py
+│   └── engine.py                   # Backtest execution
+│
+├── models/                         # ML model stubs
+│   ├── __init__.py
+│   ├── cnn_lstm.py                 # CNN-LSTM model
+│   ├── transformer.py              # Transformer model
+│   ├── gnn.py                      # GNN model
+│   ├── xgb_ensemble.py             # XGBoost ensemble
+│   └── ppo_rl.py                   # PPO RL agent
+│
+└── features/                       # Feature engineering
+    ├── __init__.py
+    └── ta.py                       # Technical indicators (SMA, etc.)
+
+
+Total Files: 41+
+Total Directories: 13
+
+Key Features:
+=============
+✅ Complete REST API (health, screener, signals, backtest, news)
+✅ Multi-broker support (Alpaca stocks, Gemini crypto)
+✅ Multi-source data (Alpaca, Gemini, yfinance)
+✅ Dynamic strategy loading system
+✅ Wick Master Pro strategy with rejection pattern detection
+✅ Paper trading worker loop
+✅ News sentiment analysis worker
+✅ Backtesting engine
+✅ Risk management and portfolio tracking
+✅ Render.com blueprint deployment ready
+
+Critical Modifications:
+======================
+1. Created bots/base_bot.py - Missing dependency for wick_master_pro.py
+2. Added generate_signals() to WickMasterPro - Strategy loader adapter
+3. Added Strategy = WickMasterPro export for dynamic loading
+
+Status: ✅ READY FOR GIT PUSH
