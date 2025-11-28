@@ -16,7 +16,7 @@ def create_app():
     app.register_blueprint(health_bp)
     app.register_blueprint(brokers_bp)
     app.register_blueprint(news_bp)
-    app.register_blueprint(portfolio_bp)
+    app.register_blueprint(portfolio_bp, name='portfolio_unique')  # Or any unique string, e.g., 'portfolio_v1'
     app.register_blueprint(signals_bp)
     app.register_blueprint(screener_bp)
     app.register_blueprint(backtest_bp)
