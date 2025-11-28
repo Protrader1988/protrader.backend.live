@@ -1,18 +1,31 @@
-# protrader.backend.live/api/news.py
-from flask import Blueprint, jsonify, request
+# api/news.py
+from flask import Blueprint, request, jsonify
+import yfinance as yf
 
-bp = Blueprint("news", __name__, url_prefix="/news")
+bp = Blueprint("news", __name__, url_prefix="/api/news")
 
 @bp.get("/")
-def ping():
-    return jsonify({"ok": True, "service": "news"})
+def get_news():
+    """
+    GET /api/news/?q=AAPL&limit=5
+    If no ?q is provided, defaults to NVDA.
+    Uses yfinance (no API key required).
+    """
+    symbol = request.args.get("q", "NVDA").upper()
+    limit = max(1, min(int(request.args.get("limit", 5)), 20))
+    try:
+        ticker = yf.Ticker(symbol)
+        items = ticker.news or []
+        out = []
+        for n in items[:limit]:
+            out.append({
+                "symbol": symbol,
+                "title": n.get("title"),
+                "publisher": n.get("publisher"),
+                "link": n.get("link"),
+                "providerPublishTime": n.get("providerPublishTime"),
+            })
+        return jsonify({"ok": True, "symbol": symbol, "count": len(out), "news": out})
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
 
-@bp.get("/latest")
-def latest():
-    """
-    Optional: /news/latest?symbol=AAPL
-    Stub response for now. Replace with your real fetcher later.
-    """
-    symbol = (request.args.get("symbol") or "").upper()
-    data = {"symbol": symbol, "headlines": []} if symbol else {"headlines": []}
-    return jsonify({"ok": True, "data": data})
