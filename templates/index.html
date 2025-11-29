@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProTrader Backend - Live</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚀 ProTrader Backend is Live</h1>
+            <p class="subtitle">Professional Trading Platform API - Ready for Production</p>
+            <div class="status-indicator">
+                <span class="status-dot"></span>
+                <span class="status-text">System Operational</span>
+            </div>
+        </header>
+
+        <main>
+            <section class="api-section">
+                <h2>📡 API Endpoints</h2>
+                <p class="section-description">Test the backend API endpoints below:</p>
+                
+                <div class="endpoint-grid">
+                    <!-- Health Check -->
+                    <div class="endpoint-card">
+                        <div class="endpoint-header">
+                            <span class="method get">GET</span>
+                            <span class="endpoint-path">/health</span>
+                        </div>
+                        <p class="endpoint-description">System health check and status</p>
+                        <a href="/health" target="_blank" class="test-button">Test Endpoint →</a>
+                    </div>
+
+                    <!-- Portfolio -->
+                    <div class="endpoint-card">
+                        <div class="endpoint-header">
+                            <span class="method get">GET</span>
+                            <span class="endpoint-path">/api/portfolio/</span>
+                        </div>
+                        <p class="endpoint-description">Get Alpaca portfolio with positions and cash</p>
+                        <a href="/api/portfolio/" target="_blank" class="test-button">Test Endpoint →</a>
+                    </div>
+
+                    <!-- History -->
+                    <div class="endpoint-card">
+                        <div class="endpoint-header">
+                            <span class="method get">GET</span>
+                            <span class="endpoint-path">/api/history/</span>
+                        </div>
+                        <p class="endpoint-description">Historical price data (stocks & crypto)</p>
+                        <a href="/api/history/?symbol=AAPL&timeframe=1Min&limit=100" target="_blank" class="test-button">Test Endpoint →</a>
+                    </div>
+
+                    <!-- News -->
+                    <div class="endpoint-card">
+                        <div class="endpoint-header">
+                            <span class="method get">GET</span>
+                            <span class="endpoint-path">/api/news/</span>
+                        </div>
+                        <p class="endpoint-description">Latest financial news feed</p>
+                        <a href="/api/news/" target="_blank" class="test-button">Test Endpoint →</a>
+                    </div>
+
+                    <!-- Signals -->
+                    <div class="endpoint-card">
+                        <div class="endpoint-header">
+                            <span class="method get">GET</span>
+                            <span class="endpoint-path">/api/signals/</span>
+                        </div>
+                        <p class="endpoint-description">Trading signals and recommendations</p>
+                        <a href="/api/signals/" target="_blank" class="test-button">Test Endpoint →</a>
+                    </div>
+
+                    <!-- Screener -->
+                    <div class="endpoint-card">
+                        <div class="endpoint-header">
+                            <span class="method get">GET</span>
+                            <span class="endpoint-path">/api/screener/</span>
+                        </div>
+                        <p class="endpoint-description">Stock screener with filters</p>
+                        <a href="/api/screener/" target="_blank" class="test-button">Test Endpoint →</a>
+                    </div>
+
+                    <!-- Brokers -->
+                    <div class="endpoint-card">
+                        <div class="endpoint-header">
+                            <span class="method get">GET</span>
+                            <span class="endpoint-path">/api/brokers/available</span>
+                        </div>
+                        <p class="endpoint-description">List of available broker integrations</p>
+                        <a href="/api/brokers/available" target="_blank" class="test-button">Test Endpoint →</a>
+                    </div>
+
+                    <!-- Order (POST) -->
+                    <div class="endpoint-card post-endpoint">
+                        <div class="endpoint-header">
+                            <span class="method post">POST</span>
+                            <span class="endpoint-path">/api/order/</span>
+                        </div>
+                        <p class="endpoint-description">Place trading orders (requires API keys)</p>
+                        <button class="test-button disabled" disabled>POST Only</button>
+                    </div>
+
+                    <!-- Backtest (POST) -->
+                    <div class="endpoint-card post-endpoint">
+                        <div class="endpoint-header">
+                            <span class="method post">POST</span>
+                            <span class="endpoint-path">/api/backtest/</span>
+                        </div>
+                        <p class="endpoint-description">Run strategy backtesting</p>
+                        <button class="test-button disabled" disabled>POST Only</button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="info-section">
+                <h2>ℹ️ Quick Start Guide</h2>
+                <div class="info-grid">
+                    <div class="info-card">
+                        <h3>🔐 Authentication</h3>
+                        <p>Configure API keys in environment variables:</p>
+                        <ul>
+                            <li><code>ALPACA_API_KEY</code></li>
+                            <li><code>ALPACA_API_SECRET</code></li>
+                            <li><code>GEMINI_API_KEY</code> (optional)</li>
+                        </ul>
+                    </div>
+
+                    <div class="info-card">
+                        <h3>📊 Data Sources</h3>
+                        <p>Integrated with multiple providers:</p>
+                        <ul>
+                            <li>Alpaca Markets (Stocks)</li>
+                            <li>Gemini (Crypto)</li>
+                            <li>Financial News APIs</li>
+                        </ul>
+                    </div>
+
+                    <div class="info-card">
+                        <h3>🛠️ Development</h3>
+                        <p>Built with modern technologies:</p>
+                        <ul>
+                            <li>Flask + Python</li>
+                            <li>RESTful API design</li>
+                            <li>CORS enabled</li>
+                        </ul>
+                    </div>
+
+                    <div class="info-card">
+                        <h3>🚀 Deployment</h3>
+                        <p>Ready for production:</p>
+                        <ul>
+                            <li>Render.com hosting</li>
+                            <li>Auto-deploy from Git</li>
+                            <li>Environment variables</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section class="example-section">
+                <h2>💻 Example API Calls</h2>
+                <div class="code-examples">
+                    <div class="code-block">
+                        <h4>Get Portfolio (JavaScript)</h4>
+                        <pre><code>fetch('/api/portfolio/')
+  .then(res => res.json())
+  .then(data => console.log(data));</code></pre>
+                    </div>
+
+                    <div class="code-block">
+                        <h4>Get Historical Data (cURL)</h4>
+                        <pre><code>curl "https://protrader-backend-web.onrender.com/api/history/?symbol=AAPL&timeframe=1Min&limit=100"</code></pre>
+                    </div>
+
+                    <div class="code-block">
+                        <h4>Place Order (Python)</h4>
+                        <pre><code>import requests
+
+response = requests.post('/api/order/', json={
+    "symbol": "AAPL",
+    "qty": 10,
+    "side": "buy",
+    "type": "market"
+})</code></pre>
+                    </div>
+
+                    <div class="code-block">
+                        <h4>Run Backtest (JavaScript)</h4>
+                        <pre><code>fetch('/api/backtest/', {
+  method: 'POST',
+  headers: {'Content-Type': 'application/json'},
+  body: JSON.stringify({
+    symbol: 'AAPL',
+    timeframe: '1Min',
+    limit: 500
+  })
+}).then(res => res.json());</code></pre>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>ProTrader Backend v1.0 | 
+               <a href="https://github.com/Protrader1988/protrader.backend.live" target="_blank">GitHub</a> | 
+               <a href="https://dashboard.render.com" target="_blank">Render Dashboard</a>
+            </p>
+            <p class="footer-note">
+                ⚡ Powered by Flask | 📡 API-First Design | 🔒 Secure & Scalable
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // Add animation to status indicator
+        const statusDot = document.querySelector('.status-dot');
+        setInterval(() => {
+            statusDot.style.animation = 'none';
+            setTimeout(() => {
+                statusDot.style.animation = 'pulse 2s ease-in-out infinite';
+            }, 10);
+        }, 2000);
+
+        // Add click feedback to test buttons
+        document.querySelectorAll('.test-button:not(.disabled)').forEach(button => {
+            button.addEventListener('click', function(e) {
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1)';
+                }, 100);
+            });
+        });
+    </script>
+</body>
+</html>
