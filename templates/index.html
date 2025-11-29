@@ -3,236 +3,439 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ProTrader Backend - Live</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <title>ProTrader Terminal | Professional Trading Platform</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;600&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Chart.js for professional charting -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="/static/css/main.css">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>🚀 ProTrader Backend is Live</h1>
-            <p class="subtitle">Professional Trading Platform API - Ready for Production</p>
-            <div class="status-indicator">
-                <span class="status-dot"></span>
-                <span class="status-text">System Operational</span>
+    <!-- Main Container -->
+    <div class="terminal-container">
+        
+        <!-- Top Header Bar -->
+        <header class="terminal-header">
+            <div class="header-left">
+                <div class="logo">
+                    <span class="logo-icon">📊</span>
+                    <span class="logo-text">ProTrader Terminal</span>
+                </div>
+                <div class="market-status">
+                    <span class="status-indicator" id="marketStatus"></span>
+                    <span class="status-text">LIVE</span>
+                </div>
+            </div>
+            
+            <div class="header-center">
+                <div class="clock" id="marketClock">--:--:-- EST</div>
+            </div>
+            
+            <div class="header-right">
+                <div class="connection-status">
+                    <span class="connection-dot" id="connectionDot"></span>
+                    <span id="connectionText">Connected</span>
+                </div>
+                <div class="account-info">
+                    <span class="account-label">Account:</span>
+                    <span class="account-value" id="accountEquity">$0.00</span>
+                </div>
             </div>
         </header>
 
-        <main>
-            <section class="api-section">
-                <h2>📡 API Endpoints</h2>
-                <p class="section-description">Test the backend API endpoints below:</p>
+        <!-- Main Content Area -->
+        <div class="terminal-body">
+            
+            <!-- Left Sidebar Navigation -->
+            <aside class="sidebar">
+                <nav class="sidebar-nav">
+                    <button class="nav-item active" data-panel="portfolio">
+                        <span class="nav-icon">💼</span>
+                        <span class="nav-label">Portfolio</span>
+                    </button>
+                    <button class="nav-item" data-panel="chart">
+                        <span class="nav-icon">📈</span>
+                        <span class="nav-label">Chart</span>
+                    </button>
+                    <button class="nav-item" data-panel="orders">
+                        <span class="nav-icon">📝</span>
+                        <span class="nav-label">Orders</span>
+                    </button>
+                    <button class="nav-item" data-panel="backtest">
+                        <span class="nav-icon">🔬</span>
+                        <span class="nav-label">Backtest</span>
+                    </button>
+                    <button class="nav-item" data-panel="news">
+                        <span class="nav-icon">📰</span>
+                        <span class="nav-label">News</span>
+                    </button>
+                    <button class="nav-item" data-panel="settings">
+                        <span class="nav-icon">⚙️</span>
+                        <span class="nav-label">Settings</span>
+                    </button>
+                </nav>
+            </aside>
+
+            <!-- Center Content Panel -->
+            <main class="content-area">
                 
-                <div class="endpoint-grid">
-                    <!-- Health Check -->
-                    <div class="endpoint-card">
-                        <div class="endpoint-header">
-                            <span class="method get">GET</span>
-                            <span class="endpoint-path">/health</span>
+                <!-- Portfolio Panel -->
+                <div class="panel active" id="portfolioPanel">
+                    <div class="panel-header">
+                        <h2 class="panel-title">Portfolio Overview</h2>
+                        <button class="refresh-btn" onclick="refreshPortfolio()">
+                            <span>↻</span> Refresh
+                        </button>
+                    </div>
+                    
+                    <div class="account-summary">
+                        <div class="summary-card">
+                            <div class="summary-label">Total Equity</div>
+                            <div class="summary-value" id="totalEquity">$0.00</div>
                         </div>
-                        <p class="endpoint-description">System health check and status</p>
-                        <a href="/health" target="_blank" class="test-button">Test Endpoint →</a>
+                        <div class="summary-card">
+                            <div class="summary-label">Cash Available</div>
+                            <div class="summary-value" id="cashAvailable">$0.00</div>
+                        </div>
+                        <div class="summary-card">
+                            <div class="summary-label">Day P&L</div>
+                            <div class="summary-value pnl" id="dayPnL">$0.00</div>
+                        </div>
+                        <div class="summary-card">
+                            <div class="summary-label">Total P&L</div>
+                            <div class="summary-value pnl" id="totalPnL">$0.00</div>
+                        </div>
                     </div>
 
-                    <!-- Portfolio -->
-                    <div class="endpoint-card">
-                        <div class="endpoint-header">
-                            <span class="method get">GET</span>
-                            <span class="endpoint-path">/api/portfolio/</span>
+                    <div class="positions-container">
+                        <h3 class="section-title">Open Positions</h3>
+                        <div class="data-table-wrapper">
+                            <table class="data-table" id="positionsTable">
+                                <thead>
+                                    <tr>
+                                        <th>Symbol</th>
+                                        <th>Qty</th>
+                                        <th>Avg Price</th>
+                                        <th>Current Price</th>
+                                        <th>Market Value</th>
+                                        <th>P&L</th>
+                                        <th>P&L %</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="positionsBody">
+                                    <tr>
+                                        <td colspan="7" class="empty-state">No positions loaded. Click Refresh.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
-                        <p class="endpoint-description">Get Alpaca portfolio with positions and cash</p>
-                        <a href="/api/portfolio/" target="_blank" class="test-button">Test Endpoint →</a>
-                    </div>
-
-                    <!-- History -->
-                    <div class="endpoint-card">
-                        <div class="endpoint-header">
-                            <span class="method get">GET</span>
-                            <span class="endpoint-path">/api/history/</span>
-                        </div>
-                        <p class="endpoint-description">Historical price data (stocks & crypto)</p>
-                        <a href="/api/history/?symbol=AAPL&timeframe=1Min&limit=100" target="_blank" class="test-button">Test Endpoint →</a>
-                    </div>
-
-                    <!-- News -->
-                    <div class="endpoint-card">
-                        <div class="endpoint-header">
-                            <span class="method get">GET</span>
-                            <span class="endpoint-path">/api/news/</span>
-                        </div>
-                        <p class="endpoint-description">Latest financial news feed</p>
-                        <a href="/api/news/" target="_blank" class="test-button">Test Endpoint →</a>
-                    </div>
-
-                    <!-- Signals -->
-                    <div class="endpoint-card">
-                        <div class="endpoint-header">
-                            <span class="method get">GET</span>
-                            <span class="endpoint-path">/api/signals/</span>
-                        </div>
-                        <p class="endpoint-description">Trading signals and recommendations</p>
-                        <a href="/api/signals/" target="_blank" class="test-button">Test Endpoint →</a>
-                    </div>
-
-                    <!-- Screener -->
-                    <div class="endpoint-card">
-                        <div class="endpoint-header">
-                            <span class="method get">GET</span>
-                            <span class="endpoint-path">/api/screener/</span>
-                        </div>
-                        <p class="endpoint-description">Stock screener with filters</p>
-                        <a href="/api/screener/" target="_blank" class="test-button">Test Endpoint →</a>
-                    </div>
-
-                    <!-- Brokers -->
-                    <div class="endpoint-card">
-                        <div class="endpoint-header">
-                            <span class="method get">GET</span>
-                            <span class="endpoint-path">/api/brokers/available</span>
-                        </div>
-                        <p class="endpoint-description">List of available broker integrations</p>
-                        <a href="/api/brokers/available" target="_blank" class="test-button">Test Endpoint →</a>
-                    </div>
-
-                    <!-- Order (POST) -->
-                    <div class="endpoint-card post-endpoint">
-                        <div class="endpoint-header">
-                            <span class="method post">POST</span>
-                            <span class="endpoint-path">/api/order/</span>
-                        </div>
-                        <p class="endpoint-description">Place trading orders (requires API keys)</p>
-                        <button class="test-button disabled" disabled>POST Only</button>
-                    </div>
-
-                    <!-- Backtest (POST) -->
-                    <div class="endpoint-card post-endpoint">
-                        <div class="endpoint-header">
-                            <span class="method post">POST</span>
-                            <span class="endpoint-path">/api/backtest/</span>
-                        </div>
-                        <p class="endpoint-description">Run strategy backtesting</p>
-                        <button class="test-button disabled" disabled>POST Only</button>
                     </div>
                 </div>
-            </section>
 
-            <section class="info-section">
-                <h2>ℹ️ Quick Start Guide</h2>
-                <div class="info-grid">
-                    <div class="info-card">
-                        <h3>🔐 Authentication</h3>
-                        <p>Configure API keys in environment variables:</p>
-                        <ul>
-                            <li><code>ALPACA_API_KEY</code></li>
-                            <li><code>ALPACA_API_SECRET</code></li>
-                            <li><code>GEMINI_API_KEY</code> (optional)</li>
-                        </ul>
+                <!-- Chart Panel -->
+                <div class="panel" id="chartPanel">
+                    <div class="panel-header">
+                        <h2 class="panel-title">Chart Analysis</h2>
+                        <div class="chart-controls">
+                            <input type="text" id="symbolInput" class="symbol-input" placeholder="Enter Symbol (e.g. AAPL)" value="AAPL">
+                            <select id="timeframeSelect" class="timeframe-select">
+                                <option value="1Min">1m</option>
+                                <option value="5Min">5m</option>
+                                <option value="15Min">15m</option>
+                                <option value="1Hour">1h</option>
+                                <option value="1Day" selected>1D</option>
+                            </select>
+                            <button class="refresh-btn" onclick="loadChart()">Load Chart</button>
+                        </div>
                     </div>
-
-                    <div class="info-card">
-                        <h3>📊 Data Sources</h3>
-                        <p>Integrated with multiple providers:</p>
-                        <ul>
-                            <li>Alpaca Markets (Stocks)</li>
-                            <li>Gemini (Crypto)</li>
-                            <li>Financial News APIs</li>
-                        </ul>
+                    
+                    <div class="chart-container">
+                        <canvas id="priceChart"></canvas>
                     </div>
-
-                    <div class="info-card">
-                        <h3>🛠️ Development</h3>
-                        <p>Built with modern technologies:</p>
-                        <ul>
-                            <li>Flask + Python</li>
-                            <li>RESTful API design</li>
-                            <li>CORS enabled</li>
-                        </ul>
-                    </div>
-
-                    <div class="info-card">
-                        <h3>🚀 Deployment</h3>
-                        <p>Ready for production:</p>
-                        <ul>
-                            <li>Render.com hosting</li>
-                            <li>Auto-deploy from Git</li>
-                            <li>Environment variables</li>
-                        </ul>
-                    </div>
-                </div>
-            </section>
-
-            <section class="example-section">
-                <h2>💻 Example API Calls</h2>
-                <div class="code-examples">
-                    <div class="code-block">
-                        <h4>Get Portfolio (JavaScript)</h4>
-                        <pre><code>fetch('/api/portfolio/')
-  .then(res => res.json())
-  .then(data => console.log(data));</code></pre>
-                    </div>
-
-                    <div class="code-block">
-                        <h4>Get Historical Data (cURL)</h4>
-                        <pre><code>curl "https://protrader-backend-web.onrender.com/api/history/?symbol=AAPL&timeframe=1Min&limit=100"</code></pre>
-                    </div>
-
-                    <div class="code-block">
-                        <h4>Place Order (Python)</h4>
-                        <pre><code>import requests
-
-response = requests.post('/api/order/', json={
-    "symbol": "AAPL",
-    "qty": 10,
-    "side": "buy",
-    "type": "market"
-})</code></pre>
-                    </div>
-
-                    <div class="code-block">
-                        <h4>Run Backtest (JavaScript)</h4>
-                        <pre><code>fetch('/api/backtest/', {
-  method: 'POST',
-  headers: {'Content-Type': 'application/json'},
-  body: JSON.stringify({
-    symbol: 'AAPL',
-    timeframe: '1Min',
-    limit: 500
-  })
-}).then(res => res.json());</code></pre>
+                    
+                    <div class="chart-info" id="chartInfo">
+                        <div class="info-item">
+                            <span class="info-label">Open:</span>
+                            <span class="info-value" id="chartOpen">--</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">High:</span>
+                            <span class="info-value" id="chartHigh">--</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Low:</span>
+                            <span class="info-value" id="chartLow">--</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Close:</span>
+                            <span class="info-value" id="chartClose">--</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Volume:</span>
+                            <span class="info-value" id="chartVolume">--</span>
+                        </div>
                     </div>
                 </div>
-            </section>
-        </main>
 
-        <footer>
-            <p>ProTrader Backend v1.0 | 
-               <a href="https://github.com/Protrader1988/protrader.backend.live" target="_blank">GitHub</a> | 
-               <a href="https://dashboard.render.com" target="_blank">Render Dashboard</a>
-            </p>
-            <p class="footer-note">
-                ⚡ Powered by Flask | 📡 API-First Design | 🔒 Secure & Scalable
-            </p>
+                <!-- Orders Panel -->
+                <div class="panel" id="ordersPanel">
+                    <div class="panel-header">
+                        <h2 class="panel-title">Order Entry</h2>
+                    </div>
+                    
+                    <div class="order-form">
+                        <div class="form-group">
+                            <label>Symbol</label>
+                            <input type="text" id="orderSymbol" class="form-input" placeholder="e.g. AAPL">
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Side</label>
+                                <div class="button-group">
+                                    <button class="btn-buy active" id="btnBuy" onclick="selectSide('buy')">BUY</button>
+                                    <button class="btn-sell" id="btnSell" onclick="selectSide('sell')">SELL</button>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Quantity</label>
+                                <input type="number" id="orderQty" class="form-input" placeholder="0" min="1" value="1">
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Order Type</label>
+                                <select id="orderType" class="form-input" onchange="toggleLimitPrice()">
+                                    <option value="market">Market</option>
+                                    <option value="limit">Limit</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group" id="limitPriceGroup" style="display: none;">
+                                <label>Limit Price</label>
+                                <input type="number" id="limitPrice" class="form-input" placeholder="0.00" step="0.01">
+                            </div>
+                        </div>
+                        
+                        <div class="risk-warning">
+                            ⚠️ <strong>Risk Warning:</strong> Trading involves substantial risk. Only trade with funds you can afford to lose.
+                        </div>
+                        
+                        <button class="submit-order-btn" onclick="submitOrder()">
+                            <span id="orderBtnText">Submit Order</span>
+                        </button>
+                        
+                        <div class="order-result" id="orderResult"></div>
+                    </div>
+                </div>
+
+                <!-- Backtest Panel -->
+                <div class="panel" id="backtestPanel">
+                    <div class="panel-header">
+                        <h2 class="panel-title">Strategy Backtesting</h2>
+                    </div>
+                    
+                    <div class="backtest-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Symbol</label>
+                                <input type="text" id="backtestSymbol" class="form-input" placeholder="AAPL" value="AAPL">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Timeframe</label>
+                                <select id="backtestTimeframe" class="form-input">
+                                    <option value="1Min">1 Minute</option>
+                                    <option value="5Min">5 Minutes</option>
+                                    <option value="15Min">15 Minutes</option>
+                                    <option value="1Hour">1 Hour</option>
+                                    <option value="1Day" selected>1 Day</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Data Points</label>
+                                <input type="number" id="backtestLimit" class="form-input" value="500" min="100" max="1000">
+                            </div>
+                        </div>
+                        
+                        <button class="submit-order-btn" onclick="runBacktest()">
+                            <span id="backtestBtnText">Run Backtest</span>
+                        </button>
+                    </div>
+                    
+                    <div class="backtest-results" id="backtestResults" style="display: none;">
+                        <h3 class="section-title">Backtest Results</h3>
+                        
+                        <div class="results-summary">
+                            <div class="result-card">
+                                <div class="result-label">Net P&L</div>
+                                <div class="result-value pnl" id="backtestPnL">$0.00</div>
+                            </div>
+                            <div class="result-card">
+                                <div class="result-label">Win Rate</div>
+                                <div class="result-value" id="backtestWinRate">0%</div>
+                            </div>
+                            <div class="result-card">
+                                <div class="result-label">Total Trades</div>
+                                <div class="result-value" id="backtestTrades">0</div>
+                            </div>
+                            <div class="result-card">
+                                <div class="result-label">Max Drawdown</div>
+                                <div class="result-value negative" id="backtestDrawdown">0%</div>
+                            </div>
+                        </div>
+                        
+                        <div class="equity-curve">
+                            <canvas id="equityCurveChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- News Panel -->
+                <div class="panel" id="newsPanel">
+                    <div class="panel-header">
+                        <h2 class="panel-title">Market News</h2>
+                        <button class="refresh-btn" onclick="refreshNews()">
+                            <span>↻</span> Refresh
+                        </button>
+                    </div>
+                    
+                    <div class="news-container" id="newsContainer">
+                        <div class="empty-state">Loading news...</div>
+                    </div>
+                </div>
+
+                <!-- Settings Panel -->
+                <div class="panel" id="settingsPanel">
+                    <div class="panel-header">
+                        <h2 class="panel-title">Settings</h2>
+                    </div>
+                    
+                    <div class="settings-content">
+                        <div class="settings-section">
+                            <h3 class="section-title">Broker Configuration</h3>
+                            
+                            <div class="broker-status">
+                                <div class="broker-item">
+                                    <div class="broker-info">
+                                        <span class="broker-name">Alpaca Markets</span>
+                                        <span class="broker-status-badge" id="alpacaStatus">Checking...</span>
+                                    </div>
+                                    <div class="broker-details">Stock & Options Trading</div>
+                                </div>
+                                
+                                <div class="broker-item">
+                                    <div class="broker-info">
+                                        <span class="broker-name">Gemini</span>
+                                        <span class="broker-status-badge" id="geminiStatus">Checking...</span>
+                                    </div>
+                                    <div class="broker-details">Cryptocurrency Trading</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="settings-section">
+                            <h3 class="section-title">Trading Mode</h3>
+                            <div class="toggle-group">
+                                <label class="toggle-label">
+                                    <input type="checkbox" id="paperModeToggle" checked>
+                                    <span class="toggle-slider"></span>
+                                    <span class="toggle-text">Paper Trading Mode (Simulated)</span>
+                                </label>
+                            </div>
+                            <div class="warning-box">
+                                ⚠️ Switch to Live mode only after thorough testing. Real money will be at risk.
+                            </div>
+                        </div>
+                        
+                        <div class="settings-section">
+                            <h3 class="section-title">Risk Management</h3>
+                            <div class="form-group">
+                                <label>Max Position Size (%)</label>
+                                <input type="number" id="maxPositionSize" class="form-input" value="10" min="1" max="100">
+                            </div>
+                            <div class="form-group">
+                                <label>Stop Loss (%)</label>
+                                <input type="number" id="stopLoss" class="form-input" value="2" min="0.1" max="50" step="0.1">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+
+            <!-- Right Quick Order Panel -->
+            <aside class="quick-order-panel">
+                <h3 class="panel-title">Quick Order</h3>
+                
+                <div class="quick-order-form">
+                    <input type="text" id="quickSymbol" class="quick-input" placeholder="Symbol">
+                    <input type="number" id="quickQty" class="quick-input" placeholder="Qty" value="1" min="1">
+                    
+                    <div class="quick-buttons">
+                        <button class="quick-buy-btn" onclick="quickOrder('buy')">
+                            BUY<br><span class="quick-btn-subtitle">Market</span>
+                        </button>
+                        <button class="quick-sell-btn" onclick="quickOrder('sell')">
+                            SELL<br><span class="quick-btn-subtitle">Market</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="watchlist">
+                    <h4 class="watchlist-title">Watchlist</h4>
+                    <div class="watchlist-items" id="watchlistItems">
+                        <div class="watchlist-item">
+                            <div class="watch-symbol">AAPL</div>
+                            <div class="watch-price">$--</div>
+                        </div>
+                        <div class="watchlist-item">
+                            <div class="watch-symbol">TSLA</div>
+                            <div class="watch-price">$--</div>
+                        </div>
+                        <div class="watchlist-item">
+                            <div class="watch-symbol">GOOGL</div>
+                            <div class="watch-price">$--</div>
+                        </div>
+                        <div class="watchlist-item">
+                            <div class="watch-symbol">MSFT</div>
+                            <div class="watch-price">$--</div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+        </div>
+
+        <!-- Bottom Status Bar -->
+        <footer class="terminal-footer">
+            <div class="footer-left">
+                <span class="footer-item">ProTrader Terminal v2.0</span>
+                <span class="footer-separator">|</span>
+                <span class="footer-item" id="systemStatus">System Online</span>
+            </div>
+            <div class="footer-right">
+                <span class="footer-item" id="lastUpdate">Last Updated: --</span>
+            </div>
         </footer>
+
     </div>
 
-    <script>
-        // Add animation to status indicator
-        const statusDot = document.querySelector('.status-dot');
-        setInterval(() => {
-            statusDot.style.animation = 'none';
-            setTimeout(() => {
-                statusDot.style.animation = 'pulse 2s ease-in-out infinite';
-            }, 10);
-        }, 2000);
-
-        // Add click feedback to test buttons
-        document.querySelectorAll('.test-button:not(.disabled)').forEach(button => {
-            button.addEventListener('click', function(e) {
-                this.style.transform = 'scale(0.95)';
-                setTimeout(() => {
-                    this.style.transform = 'scale(1)';
-                }, 100);
-            });
-        });
-    </script>
+    <!-- JavaScript Files -->
+    <script src="/static/js/app.js"></script>
+    <script src="/static/js/portfolio.js"></script>
+    <script src="/static/js/chart.js"></script>
+    <script src="/static/js/orders.js"></script>
+    <script src="/static/js/backtest.js"></script>
 </body>
 </html>
